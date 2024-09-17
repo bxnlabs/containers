@@ -65,7 +65,7 @@ ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 
 FROM py-base AS py-devtools
 
-# renovate: datasource=pypi packageName=poetry versioning=pypi
+# renovate: datasource=pypi packageName=poetry versioning=semver
 ARG POETRY_VERSION=1.8.3
 
 ENV POETRY_HOME ${BXN_HOME}/lib/poetry
