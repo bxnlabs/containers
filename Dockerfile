@@ -65,10 +65,14 @@ ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 
 FROM py-base AS py-devtools
 
+# renovate: datasource=pypi packageName=poetry versioning=pypi
+ARG POETRY_VERSION=1.8.3
+
 ENV POETRY_HOME ${BXN_HOME}/lib/poetry
-ENV POETRY_VERSION "1.8.3"
+ENV POETRY_VERSION ${POETRY_VERSION}
 ENV POETRY_VIRTUALENVS_CREATE false
 ENV PATH ${POETRY_HOME}/bin:${PATH}
+
 
 # Install development tools
 RUN apt-get update && apt-get install build-essential curl git make ncat tmux vim
