@@ -15,5 +15,5 @@ if [ "$(git branch --show-current)" = main ]; then
     git log --pretty="format:%cd %h" --date="format-local:%Y%m%d" | \
         awk 'NR==1{d=$1;h=$2}{if(d==$1)c++;else exit}END{print d"."c"_"h}'
 else
-    printf dev_$(git branch --show-current | tr / -)_$(git rev-parse --short HEAD)
+    printf $(git branch --show-current | tr / -)_$(git rev-parse --short HEAD)
 fi
