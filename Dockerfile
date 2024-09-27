@@ -65,18 +65,14 @@ ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 
 FROM py-base AS py-devtools
 
-# renovate: datasource=pypi packageName=poetry versioning=semver
-ARG POETRY_VERSION=1.8.3
+# renovate: datasource=github-releases packageName=astral-sh/uv versioning=semver
+ARG UV_VERSION=0.4.16
 
-ENV POETRY_HOME ${BXN_HOME}/lib/poetry
-ENV POETRY_VERSION ${POETRY_VERSION}
-ENV POETRY_VIRTUALENVS_CREATE false
-ENV PATH ${POETRY_HOME}/bin:${PATH}
-
+ENV UV_INSTALL_DIR ${BXN_HOME}/bin
 
 # Install development tools
 RUN apt-get update && apt-get install build-essential curl git make ncat tmux vim
-RUN curl -sSL https://install.python-poetry.org | /usr/local/bin/python -
+RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh
 
 
 FROM py-devtools AS py-devenv
