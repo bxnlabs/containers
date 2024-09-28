@@ -9,8 +9,22 @@
       "matchDatasources": [
         "docker"
       ],
+      "matchPackageNames": [
+        "python"
+      ],
+      "pinDigests": true,
       "stabilityDays": 3,
-      "pinDigests": true
+      "versioning": "pep440"
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "debian"
+      ],
+      "pinDigests": true,
+      "stabilityDays": 3
     }
   ],
   "customManagers": [
