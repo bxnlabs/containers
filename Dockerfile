@@ -26,7 +26,7 @@ RUN mkdir -p ${BXN_HOME}/bin ${BXN_HOME}/lib ${BXN_HOME}/share
 ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 
 
-FROM python:3.12-slim-bookworm@sha256:032c52613401895aa3d418a4c563d2d05f993bc3ecc065c8f4e2280978acd249 AS py-base
+FROM python:3.12-slim-bookworm@sha256:ccf9f245a6ad1d215cb0124a669ec50d00a7841c4eecf428b6220e06835ca06c AS py-base
 
 ENV DEBCONF_NONINTERACTIVE_SEEN true
 ENV DEBIAN_FRONTEND noninteractive
