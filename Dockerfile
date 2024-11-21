@@ -66,7 +66,7 @@ ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 FROM py-base AS py-devtools
 
 # renovate: datasource=github-releases packageName=astral-sh/uv versioning=semver
-ARG UV_VERSION=0.5.3
+ARG UV_VERSION=0.5.4
 
 ENV UV_INSTALL_DIR ${BXN_HOME}/bin
 
