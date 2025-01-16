@@ -10,7 +10,6 @@
         "python-version"
       ],
       "matchUpdateTypes": ["patch"],
-      "separateMinorPatch": true,
       "versioning": "python"
     },
     {
