@@ -9,7 +9,7 @@
       "matchDatasources": [
         "python-version"
       ],
-      "matchUpdateTypes": ["patch"]
+      "separateMinorPatch": true
     },
     {
       "matchDatasources": [
