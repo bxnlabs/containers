@@ -30,7 +30,7 @@ ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 FROM base AS py-devtools
 
 # renovate: datasource=python-version versioning=python
-ARG PYTHON_VERSION=3.12.7
+ARG PYTHON_VERSION=3.12.8
 
 # renovate: datasource=github-releases packageName=astral-sh/uv versioning=semver
 ARG UV_VERSION=0.5.20
