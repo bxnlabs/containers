@@ -9,8 +9,7 @@
       "matchDatasources": [
         "python-version"
       ],
-      "matchUpdateTypes": ["patch"],
-      "versioning": "python"
+      "matchUpdateTypes": ["patch"]
     },
     {
       "matchDatasources": [
