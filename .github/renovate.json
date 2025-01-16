@@ -7,14 +7,11 @@
   "packageRules": [
     {
       "matchDatasources": [
-        "docker"
+        "python-version"
       ],
-      "matchPackageNames": [
-        "python"
-      ],
-      "pinDigests": true,
-      "stabilityDays": 3,
-      "versioning": "pep440"
+      "matchUpdateTypes": ["patch"],
+      "separateMinorPatch": true,
+      "versioning": "python"
     },
     {
       "matchDatasources": [
@@ -28,16 +25,6 @@
     }
   ],
   "customManagers": [
-    {
-      "customType": "regex",
-      "description": "Update _VERSION variables in Dockerfiles (patch version only)",
-      "fileMatch": ["(^|/|\\.)Dockerfile$", "(^|/)Dockerfile\\.[^/]*$"],
-      "matchStrings": [
-        "# renovate: type=patch datasource=(?<datasource>[a-z-]+?)(?: packageName=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-]+?))?\\s(?:ARG) (?<depName>[^\\s]+?)_VERSION=(?<currentValue>.+)\\s"
-      ],
-      "matchUpdateTypes": ["patch"],
-      "separateMinorPatch": true
-    },
     {
       "customType": "regex",
       "description": "Update _VERSION variables in Dockerfiles",
