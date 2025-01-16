@@ -9,20 +9,14 @@
       "matchDatasources": [
         "python-version"
       ],
-      "separateMinorPatch": true
+      "separateMinorPatch": true,
+      "enabled": false
     },
     {
       "matchDatasources": [
         "python-version"
       ],
       "matchUpdateTypes": ["patch"]
-    },
-    {
-      "matchDatasources": [
-        "python-version"
-      ],
-      "matchUpdateTypes": ["major", "minor"],
-      "automerge": false
     },
     {
       "matchDatasources": [
