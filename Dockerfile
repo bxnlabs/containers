@@ -1,10 +1,10 @@
 FROM debian:12-slim@sha256:1537a6a1cbc4b4fd401da800ee9480207e7dc1f23560c21259f681db56768f63 AS base
 
-ENV DEBCONF_NONINTERACTIVE_SEEN true
-ENV DEBIAN_FRONTEND noninteractive
-ENV BXN_HOME /bxn
-ENV VIRTUAL_ENV ${BXN_HOME}/lib/venv
-ENV PATH ${VIRTUAL_ENV}/bin:${BXN_HOME}/bin:${PATH}
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BXN_HOME=/bxn
+ENV VIRTUAL_ENV=${BXN_HOME}/lib/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${BXN_HOME}/bin:${PATH}
 
 # Copy configuration
 COPY rootfs/ /
@@ -35,10 +35,10 @@ ARG PYTHON_VERSION=3.12.7
 # renovate: datasource=github-releases packageName=astral-sh/uv versioning=semver
 ARG UV_VERSION=0.5.8
 
-ENV UV_INSTALL_DIR ${BXN_HOME}/bin
-ENV UV_PROJECT_ENVIRONMENT ${VIRTUAL_ENV}
-ENV UV_PYTHON_DOWNLOADS manual
-ENV UV_PYTHON_INSTALL_DIR ${BXN_HOME}/share/python
+ENV UV_INSTALL_DIR=${BXN_HOME}/bin
+ENV UV_PROJECT_ENVIRONMENT=${VIRTUAL_ENV}
+ENV UV_PYTHON_DOWNLOADS=manual
+ENV UV_PYTHON_INSTALL_DIR=${BXN_HOME}/share/python
 
 # Install development tools
 RUN apt-get update && apt-get install build-essential curl git make ncat tmux vim
