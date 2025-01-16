@@ -9,15 +9,19 @@
       "matchDatasources": [
         "python-version"
       ],
-      "separateMinorPatch": true,
-      "enabled": false
+      "separateMinorPatch": true
     },
     {
       "matchDatasources": [
         "python-version"
       ],
-      "matchUpdateTypes": ["patch"],
-      "enabled": true
+      "matchUpdateTypes": ["patch"]
+    },
+    {
+      "matchDatasources": [
+        "python-version"
+      ],
+      "enabled": false
     },
     {
       "matchDatasources": [
