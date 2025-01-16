@@ -16,7 +16,8 @@
       "matchDatasources": [
         "python-version"
       ],
-      "matchUpdateTypes": ["patch"]
+      "matchUpdateTypes": ["patch"],
+      "enabled": true
     },
     {
       "matchDatasources": [
