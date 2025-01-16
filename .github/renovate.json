@@ -19,6 +19,13 @@
     },
     {
       "matchDatasources": [
+        "python-version"
+      ],
+      "matchUpdateTypes": ["major", "minor"],
+      "automerge": false
+    },
+    {
+      "matchDatasources": [
         "docker"
       ],
       "matchPackageNames": [
