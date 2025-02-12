@@ -33,7 +33,7 @@ FROM base AS py-devtools
 ARG PYTHON_VERSION=3.12.9
 
 # renovate: datasource=github-releases packageName=astral-sh/uv versioning=semver
-ARG UV_VERSION=0.5.30
+ARG UV_VERSION=0.5.31
 
 ENV UV_INSTALL_DIR=${BXN_HOME}/bin
 ENV UV_PROJECT_ENVIRONMENT=${VIRTUAL_ENV}
