@@ -47,6 +47,9 @@ RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh
 # Install Python
 RUN uv python install ${PYTHON_VERSION}
 
+# Set up virtual environment
+RUN uv venv --no-project ${VIRTUAL_ENV}
+
 
 FROM base AS py-base
 
