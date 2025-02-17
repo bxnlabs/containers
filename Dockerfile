@@ -3,8 +3,7 @@ FROM debian:12-slim@sha256:40b107342c492725bc7aacbe93a49945445191ae364184a6d24fe
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ENV DEBIAN_FRONTEND=noninteractive
 ENV BXN_HOME=/bxn
-ENV VIRTUAL_ENV=${BXN_HOME}/lib/venv
-ENV PATH=${VIRTUAL_ENV}/bin:${BXN_HOME}/bin:${PATH}
+ENV PATH=${BXN_HOME}/bin:${PATH}
 
 # Copy configuration
 COPY rootfs/ /
@@ -27,10 +26,24 @@ RUN mkdir -p ${BXN_HOME}/bin ${BXN_HOME}/lib ${BXN_HOME}/share
 ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 
 
-FROM base AS py-devtools
+FROM base AS py-core
 
 # renovate: datasource=python-version versioning=python
 ARG PYTHON_VERSION=3.12.9
+ENV PYTHON_VERSION=${PYTHON_VERSION}
+
+# Add virtual environment and update path
+ENV VIRTUAL_ENV=${BXN_HOME}/lib/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${BXN_HOME}/bin:${PATH}
+
+# Source directory for project files
+ENV SOURCE_DIR=${BXN_HOME}/src
+ENV PYTHONPATH=${SOURCE_DIR}:${PYTHONPATH}
+
+WORKDIR ${SOURCE_DIR}
+
+
+FROM py-core AS py-devtools
 
 # renovate: datasource=github-releases packageName=astral-sh/uv versioning=semver
 ARG UV_VERSION=0.6.0
@@ -48,12 +61,7 @@ RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh
 RUN uv python install ${PYTHON_VERSION}
 
 # Set up virtual environment
-RUN uv venv --no-project ${VIRTUAL_ENV}
-
-
-FROM base AS py-base
-
-COPY --from=py-devtools ${BXN_HOME}/share/python ${BXN_HOME}/share/python
+RUN uv venv --no-project --seed ${VIRTUAL_ENV}
 
 
 FROM py-devtools AS py-devenv
@@ -66,3 +74,8 @@ ONBUILD RUN test -n "${UID-}" && test -n "${GID-}"
 ONBUILD RUN getent group ${GID} || groupadd --gid ${GID} dev
 ONBUILD RUN useradd --non-unique --no-log-init --create-home --uid ${UID} --gid ${GID} dev \
     && chown -R ${UID}:${GID} ${VIRTUAL_ENV}
+
+
+FROM py-core AS py-base
+
+COPY --from=py-devtools ${BXN_HOME}/share/python ${BXN_HOME}/share/python
