@@ -29,7 +29,7 @@ ENTRYPOINT [ "/usr/bin/tini", "-g", "--" ]
 FROM base AS py-core
 
 # renovate: datasource=python-version versioning=python
-ARG PYTHON_VERSION=3.12.10
+ARG PYTHON_VERSION=3.12.11
 ENV PYTHON_VERSION=${PYTHON_VERSION}
 
 # Add virtual environment and update path
