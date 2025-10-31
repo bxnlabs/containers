@@ -46,7 +46,7 @@ WORKDIR ${SOURCE_DIR}
 FROM py-core AS py-devtools
 
 # renovate: datasource=github-releases packageName=astral-sh/uv versioning=semver
-ARG UV_VERSION=0.9.6
+ARG UV_VERSION=0.9.7
 
 ENV UV_INSTALL_DIR=${BXN_HOME}/bin
 ENV UV_PROJECT_ENVIRONMENT=${VIRTUAL_ENV}
