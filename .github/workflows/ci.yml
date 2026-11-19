@@ -10,6 +10,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # actionlint checks every workflow, and runs shellcheck on its run: scripts,
+  # so a broken workflow fails here before Renovate or a merge lands it.
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: -color
+
   # Picks the images whose files changed. A push to main compares with the
   # commit before it, and any other branch with its merge-base with main. A
   # change to this workflow or its scripts builds every image.
@@ -94,7 +106,7 @@ jobs:
   # The repository ruleset requires this check by name, so renaming the job
   # breaks merges. A skipped build, when no image changed, counts as passing.
   ci-ok:
-    needs: [changes, build-and-push]
+    needs: [lint, changes, build-and-push]
     if: always()
     runs-on: ubuntu-latest
     permissions: {}
