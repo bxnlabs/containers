@@ -2,12 +2,60 @@ name: build and push
 
 on: push
 
+# A newer push cancels an older run on the same branch, except on main. A main
+# run builds only what its own push changed, so a cancelled one would never
+# publish its images.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_id || github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # Picks the images whose files changed. A push to main compares with the
+  # commit before it, and any other branch with its merge-base with main. A
+  # change to this workflow or its scripts builds every image.
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: filter
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            debian:
+              - Dockerfile
+              - rootfs/**
+              - .github/workflows/ci.yml
+              - .github/scripts/**
+            actions-runner:
+              - actions-runner/**
+              - .github/workflows/ci.yml
+              - .github/scripts/**
+      # Each filter names a family of images: the debian family shares the root
+      # Dockerfile, and the runner has its own.
+      - id: matrix
+        run: |
+          jq -c '[.[] | {
+            "debian": [
+              {image: "base", context: ".", target: "base"},
+              {image: "py-base", context: ".", target: "py-base"},
+              {image: "py-devtools", context: ".", target: "py-devtools"},
+              {image: "py-devenv", context: ".", target: "py-devenv"}
+            ],
+            "actions-runner": [
+              {image: "actions-runner", context: "actions-runner", target: "actions-runner"}
+            ]
+          }[.][]]' <<<"$CHANGES" | sed 's/^/matrix=/' >>"$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+        env:
+          CHANGES: ${{ steps.filter.outputs.changes }}
+
   build-and-push:
+    needs: changes
+    if: needs.changes.outputs.matrix != '[]'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,7 +63,8 @@ jobs:
       packages: write
     strategy:
       matrix:
-        image: [base, py-base, py-devtools, py-devenv]
+        include: ${{ fromJSON(needs.changes.outputs.matrix) }}
+    name: build-and-push (${{ matrix.image }})
     steps:
       - uses: actions/checkout@v7
         with:
@@ -29,9 +78,30 @@ jobs:
       - uses: docker/setup-buildx-action@v4
       - id: vars
         run: .github/scripts/vars
+      # Each image keeps its own layer cache, so an unchanged layer, such as
+      # an apt-get install, is reused until its Dockerfile line or base image
+      # changes.
       - uses: docker/build-push-action@v7
         with:
+          context: ${{ matrix.context }}
           platforms: linux/amd64,linux/arm64
           push: true
-          target: ${{ matrix.image }}
+          target: ${{ matrix.target }}
           tags: ${{ steps.vars.outputs.image }}/${{ matrix.image }}:${{ steps.vars.outputs.version }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  # The repository ruleset requires this check by name, so renaming the job
+  # breaks merges. A skipped build, when no image changed, counts as passing.
+  ci-ok:
+    needs: [changes, build-and-push]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Require every needed job to succeed or be skipped
+        run: |
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<<"$NEEDS"
+          jq -e 'all(.[]; .result == "success" or .result == "skipped")' <<<"$NEEDS" >/dev/null
+        env:
+          NEEDS: ${{ toJSON(needs) }}
