@@ -16,6 +16,10 @@ ARG KUBECONFORM_VERSION=v0.8.0
 ARG CRANE_VERSION=v0.22.1
 # renovate: datasource=github-releases packageName=mikefarah/yq
 ARG YQ_VERSION=v4.54.3
+# renovate: datasource=github-releases packageName=rhysd/actionlint
+ARG ACTIONLINT_VERSION=v1.7.12
+# renovate: datasource=github-releases packageName=koalaman/shellcheck
+ARG SHELLCHECK_VERSION=v0.11.0
 
 ARG TARGETARCH
 
@@ -29,8 +33,8 @@ RUN apt-get update \
 COPY --from=ghcr.io/astral-sh/uv:0.13.9 /uv /uvx /usr/local/bin/
 
 RUN case "${TARGETARCH}" in \
-        amd64) node_arch=x64; crane_arch=x86_64 ;; \
-        arm64) node_arch=arm64; crane_arch=arm64 ;; \
+        amd64) node_arch=x64; crane_arch=x86_64; shellcheck_arch=x86_64 ;; \
+        arm64) node_arch=arm64; crane_arch=arm64; shellcheck_arch=aarch64 ;; \
         *) echo "unsupported arch ${TARGETARCH}" >&2; exit 1 ;; \
     esac \
     && tmp="$(mktemp -d)" \
@@ -48,6 +52,10 @@ RUN case "${TARGETARCH}" in \
         | tar -xz -C /usr/local/bin crane \
     && curl -fsSLo /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${TARGETARCH}" \
     && chmod +x /usr/local/bin/yq \
+    && curl -fsSL "https://github.com/rhysd/actionlint/releases/download/${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION#v}_linux_${TARGETARCH}.tar.gz" \
+        | tar -xz -C /usr/local/bin actionlint \
+    && curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.${shellcheck_arch}.tar.gz" \
+        | tar -xz --strip-components=1 -C /usr/local/bin "shellcheck-${SHELLCHECK_VERSION}/shellcheck" \
     && rm -rf "${tmp}"
 
 USER runner
