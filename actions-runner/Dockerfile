@@ -30,7 +30,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends libatomic1 make \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=ghcr.io/astral-sh/uv:0.13.9 /uv /uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:0.13.10 /uv /uvx /usr/local/bin/
 
 RUN case "${TARGETARCH}" in \
         amd64) node_arch=x64; crane_arch=x86_64; shellcheck_arch=x86_64 ;; \
